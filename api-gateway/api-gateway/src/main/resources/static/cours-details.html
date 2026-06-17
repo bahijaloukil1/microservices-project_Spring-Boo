@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étudiants par cours</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #2C1A0E;
+            background-image: radial-gradient(ellipse at top left, rgba(186, 117, 23, 0.25) 0%, transparent 50%), radial-gradient(ellipse at bottom right, rgba(99, 56, 6, 0.4) 0%, transparent 50%), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23BA7517' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.5;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 0.2; }
+            50% { transform: translateY(-22px) rotate(180deg); opacity: 0.45; }
+            100% { transform: translateY(0px) rotate(360deg); opacity: 0.2; }
+        }
+        .particle { position: fixed; bottom: -10px; font-size: 1.6rem; opacity: 0.2; animation: float 8s infinite ease-in-out; pointer-events: none; z-index: 0; }
+        .particle:nth-child(1) { left: 8%; animation-duration: 12s; font-size: 2rem; }
+        .particle:nth-child(2) { left: 20%; animation-duration: 10s; font-size: 1.8rem; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 35%; animation-duration: 14s; font-size: 2.2rem; animation-delay: 1s; }
+        .particle:nth-child(4) { left: 52%; animation-duration: 9s; font-size: 1.5rem; animation-delay: 3s; }
+        .particle:nth-child(5) { left: 66%; animation-duration: 11s; font-size: 2rem; animation-delay: 0.5s; }
+        .particle:nth-child(6) { left: 80%; animation-duration: 13s; font-size: 1.7rem; animation-delay: 2.5s; }
+        .particle:nth-child(7) { left: 91%; animation-duration: 7s; font-size: 1.9rem; animation-delay: 1.5s; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .container { max-width: 1000px; margin: 0 auto; position: relative; z-index: 1; animation: slideIn 0.6s ease-out; }
+        h1 { text-align: center; color: #FAC775; margin-bottom: 20px; font-size: 2rem; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        h2 { color: #EF9F27; margin-bottom: 15px; }
+        
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(250, 238, 218, 0.08); backdrop-filter: blur(10px);
+            color: #FAC775; padding: 10px 20px; border-radius: 50px;
+            text-decoration: none; margin-bottom: 25px; font-weight: bold;
+            transition: all 0.3s ease; border: 1px solid rgba(186, 117, 23, 0.35);
+        }
+        .btn-back:hover { background: rgba(186, 117, 23, 0.25); transform: translateX(-5px); color: #EF9F27; }
+        
+        .card {
+            background: rgba(250, 238, 218, 0.06); backdrop-filter: blur(14px);
+            border-radius: 20px; padding: 25px; margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2); transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(186, 117, 23, 0.3);
+        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        
+        .form-group { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+        select, input {
+            padding: 12px 15px; border: 1px solid rgba(186, 117, 23, 0.4); border-radius: 12px;
+            flex: 1; min-width: 200px; font-size: 14px; transition: all 0.3s ease;
+            background: rgba(250, 238, 218, 0.05); color: #FAC775;
+        }
+        select option { background: #2C1A0E; color: #FAC775; }
+        select:focus, input:focus { outline: none; border-color: #EF9F27; box-shadow: 0 0 0 3px rgba(239, 159, 39, 0.2); background: rgba(250, 238, 218, 0.1); }
+        
+        button {
+            background: linear-gradient(135deg, #BA7517 0%, #8B5E15 100%);
+            color: white; border: none; padding: 12px 28px; border-radius: 12px;
+            cursor: pointer; font-weight: bold; transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        button:hover { background: linear-gradient(135deg, #CF8720 0%, #A06F1A 100%); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(186, 117, 23, 0.3); }
+        
+        .table-responsive { overflow-x: auto; margin-top: 15px; border-radius: 12px; }
+        table { width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        th { background: linear-gradient(135deg, #8B5E15 0%, #6B4610 100%); color: #FAC775; padding: 14px; font-weight: 600; text-align: left; }
+        td { padding: 12px; border-bottom: 1px solid rgba(186, 117, 23, 0.3); color: rgba(250, 199, 117, 0.9); vertical-align: middle; }
+        tr:hover { background: rgba(186, 117, 23, 0.1); }
+        
+        .error { background: linear-gradient(135deg, #7A2A2A 0%, #5A1E1E 100%); color: #F09595; padding: 12px; border-radius: 12px; margin-top: 15px; }
+        .info { background: linear-gradient(135deg, #2C5282 0%, #1A365D 100%); color: #90CDF4; padding: 12px; border-radius: 12px; margin-top: 15px; }
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(250, 199, 117, 0.3); border-top: 3px solid #FAC775; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .empty-state { text-align: center; padding: 40px; color: rgba(250, 199, 117, 0.6); }
+        
+        .course-detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(186, 117, 23, 0.15);
+            border-radius: 12px;
+            border-left: 4px solid #EF9F27;
+        }
+        .course-title { font-size: 1.5rem; color: #FAC775; }
+        .course-credits { color: rgba(250, 199, 117, 0.7); }
+        .student-count { color: #EF9F27; font-weight: bold; }
+        
+        .grid-courses {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .course-card {
+            background: rgba(250, 238, 218, 0.06);
+            border: 1px solid rgba(186, 117, 23, 0.3);
+            border-radius: 12px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .course-card:hover {
+            background: rgba(186, 117, 23, 0.2);
+            border-color: #EF9F27;
+            transform: translateY(-3px);
+        }
+        .course-card .c-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+        .course-card .c-name { color: #FAC775; font-weight: bold; font-size: 1.1rem; }
+        .course-card .c-credits { color: rgba(250, 199, 117, 0.6); font-size: 0.9rem; }
+        
+        .badge {
+            display: inline-block;
+            background: rgba(186, 117, 23, 0.3);
+            color: #FAC775;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 768px) { .form-group { flex-direction: column; } th, td { padding: 8px; } h1 { font-size: 1.5rem; } }
+    </style>
+</head>
+<body>
+    <div class="particle">📚</div>
+    <div class="particle">👨‍🎓</div>
+    <div class="particle">📖</div>
+    <div class="particle">✏️</div>
+    <div class="particle">🎓</div>
+    <div class="particle">📝</div>
+    <div class="particle">✅</div>
+
+    <div class="container">
+        <a href="index.html" class="btn-back">← Retour au Dashboard</a>
+        <h1>👨‍🎓 Étudiants par cours</h1>
+        
+        <div class="card">
+            <h2>📚 Sélectionnez un cours</h2>
+            
+            <!-- Liste des cours sous forme de cartes -->
+            <div id="coursesGrid" class="grid-courses">
+                <div class="empty-state">⏳ Chargement des cours...</div>
+            </div>
+            
+            <!-- Sélecteur déroulant (alternative) -->
+            <div class="form-group" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(186, 117, 23, 0.2);">
+                <select id="courseSelect">
+                    <option value="">-- Sélectionnez un cours --</option>
+                </select>
+                <button onclick="showStudents()">🔍 Voir les étudiants</button>
+            </div>
+        </div>
+
+        <!-- Résultats -->
+        <div id="resultContainer" style="display: none;">
+            <div class="card">
+                <div id="resultContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let courses = [];
+
+        // ======================
+        // CHARGER LES COURS
+        // ======================
+        async function loadCourses() {
+            try {
+                const response = await fetch('/api/courses');
+                courses = await response.json();
+                
+                // Afficher les cours en grille
+                const grid = document.getElementById('coursesGrid');
+                if (courses.length === 0) {
+                    grid.innerHTML = '<div class="empty-state">📭 Aucun cours disponible</div>';
+                } else {
+                    grid.innerHTML = '';
+                    courses.forEach(course => {
+                        const card = document.createElement('div');
+                        card.className = 'course-card';
+                        card.innerHTML = `
+                            <span class="c-icon">📖</span>
+                            <div class="c-name">${course.title}</div>
+                            <div class="c-credits">${course.credits} crédits</div>
+                            <span class="badge" style="margin-top: 8px; display: inline-block;">👨‍🎓 Voir étudiants</span>
+                        `;
+                        card.onclick = () => showStudentsByCourse(course.id);
+                        grid.appendChild(card);
+                    });
+                }
+                
+                // Remplir le select
+                const select = document.getElementById('courseSelect');
+                select.innerHTML = '<option value="">-- Sélectionnez un cours --</option>';
+                courses.forEach(course => {
+                    const option = document.createElement('option');
+                    option.value = course.id;
+                    option.textContent = `${course.title} (${course.credits} crédits)`;
+                    select.appendChild(option);
+                });
+                
+            } catch (error) {
+                document.getElementById('coursesGrid').innerHTML = '<div class="error">❌ Erreur de chargement des cours</div>';
+                console.error('Erreur:', error);
+            }
+        }
+
+        // ======================
+        // AFFICHER LES ÉTUDIANTS D'UN COURS
+        // ======================
+        async function showStudentsByCourse(courseId) {
+            const container = document.getElementById('resultContainer');
+            const content = document.getElementById('resultContent');
+            
+            container.style.display = 'block';
+            content.innerHTML = '<div><div class="loading-spinner"></div> Chargement des étudiants...</div>';
+            
+            try {
+                // Récupérer le nom du cours
+                const course = courses.find(c => c.id == courseId);
+                const courseName = course ? course.title : 'Cours ' + courseId;
+                const courseCredits = course ? course.credits : 0;
+                
+                // Récupérer les inscriptions
+                const response = await fetch(`/api/enrollments/course/${courseId}`);
+                const enrollments = await response.json();
+                
+                if (enrollments.length === 0) {
+                    content.innerHTML = `
+                        <div class="course-detail-header">
+                            <div>
+                                <span class="course-title">📖 ${courseName}</span>
+                                <span class="course-credits" style="margin-left: 15px;">${courseCredits} crédits</span>
+                            </div>
+                            <span class="badge" style="font-size: 1rem;">0 étudiant</span>
+                        </div>
+                        <div class="info">📭 Aucun étudiant inscrit dans ce cours</div>
+                    `;
+                } else {
+                    let html = `
+                        <div class="course-detail-header">
+                            <div>
+                                <span class="course-title">📖 ${courseName}</span>
+                                <span class="course-credits" style="margin-left: 15px;">${courseCredits} crédits</span>
+                            </div>
+                            <span class="student-count">👨‍🎓 ${enrollments.length} étudiant(s)</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Étudiant</th>
+                                        <th>CNIE</th>
+                                        <th>Email</th>
+                                        <th>Date d'inscription</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    // Récupérer les détails des étudiants
+                    const studentsResponse = await fetch('/api/students');
+                    const students = await studentsResponse.json();
+                    
+                    enrollments.forEach((e, index) => {
+                        // Trouver l'étudiant correspondant
+                        const student = students.find(s => s.id == e.studentId || s.cnie == e.studentCnie);
+                        const date = new Date(e.date).toLocaleDateString('fr-FR', {
+                            year: 'numeric', month: 'long', day: 'numeric',
+                            hour: '2-digit', minute: '2-digit'
+                        });
+                        
+                        html += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td><strong>${student ? student.firstName + ' ' + student.lastName : e.studentName || e.studentCnie || 'Inconnu'}</strong></td>
+                                <td><strong>${student ? student.cnie : e.studentCnie || '-'}</strong></td>
+                                <td>${student ? student.email || '-' : '-'}</td>
+                                <td>${date}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    content.innerHTML = html;
+                }
+                
+                // Scroll vers les résultats
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+            } catch (error) {
+                content.innerHTML = '<div class="error">❌ Erreur: ' + error.message + '</div>';
+                console.error('Erreur:', error);
+            }
+        }
+
+        // ======================
+        // AFFICHER LES ÉTUDIANTS (via select)
+        // ======================
+        function showStudents() {
+            const courseId = document.getElementById('courseSelect').value;
+            if (!courseId) {
+                document.getElementById('resultContainer').style.display = 'block';
+                document.getElementById('resultContent').innerHTML = '<div class="error">❌ Veuillez sélectionner un cours</div>';
+                return;
+            }
+            showStudentsByCourse(courseId);
+        }
+
+        // ======================
+        // CHARGEMENT AU DÉMARRAGE
+        // ======================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCourses();
+        });
+    </script>
+</body>
+</html>

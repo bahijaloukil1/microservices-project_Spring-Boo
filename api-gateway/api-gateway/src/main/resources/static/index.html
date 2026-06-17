@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Enrollment System - Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #2C1A0E;
+            background-image: radial-gradient(ellipse at top left, rgba(186, 117, 23, 0.25) 0%, transparent 50%), radial-gradient(ellipse at bottom right, rgba(99, 56, 6, 0.4) 0%, transparent 50%), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23BA7517' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.5;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 0.2; }
+            50% { transform: translateY(-22px) rotate(180deg); opacity: 0.45; }
+            100% { transform: translateY(0px) rotate(360deg); opacity: 0.2; }
+        }
+        .particle {
+            position: fixed;
+            bottom: -10px;
+            font-size: 1.6rem;
+            opacity: 0.2;
+            animation: float 8s infinite ease-in-out;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .particle:nth-child(1) { left: 8%; animation-duration: 12s; font-size: 2rem; }
+        .particle:nth-child(2) { left: 20%; animation-duration: 10s; font-size: 1.8rem; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 35%; animation-duration: 14s; font-size: 2.2rem; animation-delay: 1s; }
+        .particle:nth-child(4) { left: 52%; animation-duration: 9s; font-size: 1.5rem; animation-delay: 3s; }
+        .particle:nth-child(5) { left: 66%; animation-duration: 11s; font-size: 2rem; animation-delay: 0.5s; }
+        .particle:nth-child(6) { left: 80%; animation-duration: 13s; font-size: 1.7rem; animation-delay: 2.5s; }
+        .particle:nth-child(7) { left: 91%; animation-duration: 7s; font-size: 1.9rem; animation-delay: 1.5s; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Layout avec 2 colonnes */
+        .dashboard-wrapper {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            animation: slideIn 0.6s ease-out;
+            flex-wrap: wrap;
+        }
+        
+        /* Colonne de gauche - Image */
+        .image-col {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+        }
+        
+        .image-col img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 2px solid rgba(186, 117, 23, 0.5);
+            transition: transform 0.3s ease;
+        }
+        
+        .image-col img:hover {
+            transform: scale(1.02);
+        }
+        
+        /* Colonne de droite - Dashboard */
+        .dashboard-col {
+            flex: 1;
+            min-width: 350px;
+        }
+        
+        h1 { text-align: center; color: #FAC775; margin-bottom: 20px; font-size: 2.5rem; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .subtitle { text-align: center; color: rgba(250, 199, 117, 0.7); margin-bottom: 40px; font-size: 1rem; }
+        
+        /* Menu Dashboard - 3 cartes en colonne */
+        .dashboard-menu {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+        .menu-card {
+            background: rgba(250, 238, 218, 0.08);
+            backdrop-filter: blur(14px);
+            border-radius: 20px;
+            padding: 30px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(186, 117, 23, 0.4);
+            width: 280px;
+        }
+        .menu-card:hover {
+            transform: translateY(-5px);
+            background: rgba(186, 117, 23, 0.2);
+            border-color: rgba(239, 159, 39, 0.6);
+        }
+        .menu-card .icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .menu-card h3 {
+            color: #EF9F27;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        .menu-card p {
+            color: rgba(250, 199, 117, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        .status-card {
+            background: rgba(250, 238, 218, 0.06);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(186, 117, 23, 0.3);
+        }
+        .status { color: #FAC775; font-size: 0.9rem; }
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #48bb78;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-wrapper {
+                flex-direction: column;
+            }
+            .image-col {
+                order: -1;
+            }
+            .dashboard-menu { gap: 15px; }
+            .menu-card { width: 100%; padding: 20px; }
+            h1 { font-size: 1.8rem; }
+        }
+        
+        @media (max-width: 480px) {
+            .dashboard-col { min-width: 280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="particle">📚</div>
+    <div class="particle">👨‍🎓</div>
+    <div class="particle">📖</div>
+    <div class="particle">✏️</div>
+    <div class="particle">🎓</div>
+    <div class="particle">📝</div>
+    <div class="particle">✅</div>
+
+    <div class="dashboard-wrapper">
+        <!-- Colonne de gauche: Image -->
+        <div class="image-col">
+            <img src="https://i.pinimg.com/736x/2e/2d/58/2e2d5814d41be1b637906b00602cb273.jpg" 
+                 alt="Student Enrollment Illustration" 
+                 onerror="this.src='https://via.placeholder.com/400x500?text=Education+Image'">
+        </div>
+        
+        <!-- Colonne de droite: Dashboard -->
+        <div class="dashboard-col">
+            <h1>📚 Student Enrollment System</h1>
+            <div class="subtitle">Système d'inscription aux cours</div>
+            
+            <!-- Menu principal avec 3 boutons -->
+            <div class="dashboard-menu">
+                <!-- Bouton 1: Inscription -->
+                <div class="menu-card" onclick="window.location.href='enroll.html'">
+                    <span class="icon">📝</span>
+                    <h3>Inscription à un cours</h3>
+                    <p>S'inscrire à un nouveau cours</p>
+                </div>
+                
+                <!-- Bouton 2: Mes inscriptions -->
+                <div class="menu-card" onclick="window.location.href='dashboard.html'">
+                    <span class="icon">📊</span>
+                    <h3>Mes inscriptions</h3>
+                    <p>Voir et gérer mes inscriptions</p>
+                </div>
+                
+                <!-- ✅ NOUVEAU BOUTON 3: Étudiants par cours -->
+                <div class="menu-card" onclick="window.location.href='cours-details.html'">
+                    <span class="icon">👨‍🎓</span>
+                    <h3>Étudiants par cours</h3>
+                    <p>Voir les étudiants inscrits dans chaque cours</p>
+                </div>
+            </div>
+            
+            <!-- Statut de connexion -->
+            <div class="status-card">
+                <div class="status">
+                    <span class="status-dot"></span>
+                    <span id="statusText">Vérification de la connexion...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function checkStatus() {
+            const statusDiv = document.getElementById('statusText');
+            try {
+                const response = await fetch('/api/students');
+                if (response.ok) {
+                    statusDiv.innerHTML = '✅ Connecté à l\'API Gateway - Système opérationnel';
+                } else {
+                    statusDiv.innerHTML = '⚠️ API Gateway répond mais avec erreur';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Impossible de se connecter. Vérifiez que les services sont démarrés.';
+            }
+        }
+        
+        checkStatus();
+    </script>
+</body>
+</html>

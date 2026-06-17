@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes inscriptions</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #2C1A0E;
+            background-image: radial-gradient(ellipse at top left, rgba(186, 117, 23, 0.25) 0%, transparent 50%), radial-gradient(ellipse at bottom right, rgba(99, 56, 6, 0.4) 0%, transparent 50%), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23BA7517' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.5;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 0.2; }
+            50% { transform: translateY(-22px) rotate(180deg); opacity: 0.45; }
+            100% { transform: translateY(0px) rotate(360deg); opacity: 0.2; }
+        }
+        .particle { position: fixed; bottom: -10px; font-size: 1.6rem; opacity: 0.2; animation: float 8s infinite ease-in-out; pointer-events: none; z-index: 0; }
+        .particle:nth-child(1) { left: 8%; animation-duration: 12s; font-size: 2rem; }
+        .particle:nth-child(2) { left: 20%; animation-duration: 10s; font-size: 1.8rem; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 35%; animation-duration: 14s; font-size: 2.2rem; animation-delay: 1s; }
+        .particle:nth-child(4) { left: 52%; animation-duration: 9s; font-size: 1.5rem; animation-delay: 3s; }
+        .particle:nth-child(5) { left: 66%; animation-duration: 11s; font-size: 2rem; animation-delay: 0.5s; }
+        .particle:nth-child(6) { left: 80%; animation-duration: 13s; font-size: 1.7rem; animation-delay: 2.5s; }
+        .particle:nth-child(7) { left: 91%; animation-duration: 7s; font-size: 1.9rem; animation-delay: 1.5s; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .container { max-width: 1000px; margin: 0 auto; position: relative; z-index: 1; animation: slideIn 0.6s ease-out; }
+        h1 { text-align: center; color: #FAC775; margin-bottom: 20px; font-size: 2rem; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(250, 238, 218, 0.08); backdrop-filter: blur(10px);
+            color: #FAC775; padding: 10px 20px; border-radius: 50px;
+            text-decoration: none; margin-bottom: 25px; font-weight: bold;
+            transition: all 0.3s ease; border: 1px solid rgba(186, 117, 23, 0.35);
+        }
+        .btn-back:hover { background: rgba(186, 117, 23, 0.25); transform: translateX(-5px); color: #EF9F27; }
+        .card {
+            background: rgba(250, 238, 218, 0.06); backdrop-filter: blur(14px);
+            border-radius: 20px; padding: 25px; margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2); transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: slideIn 0.5s ease-out; border: 1px solid rgba(186, 117, 23, 0.3);
+        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        .card h2 { color: #EF9F27; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(186, 117, 23, 0.4); display: inline-block; }
+        .form-group { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+        input {
+            padding: 12px 15px; border: 1px solid rgba(186, 117, 23, 0.4); border-radius: 12px;
+            flex: 1; min-width: 250px; font-size: 14px; transition: all 0.3s ease;
+            background: rgba(250, 238, 218, 0.05); color: #FAC775;
+        }
+        input:focus { outline: none; border-color: #EF9F27; box-shadow: 0 0 0 3px rgba(239, 159, 39, 0.2); background: rgba(250, 238, 218, 0.1); }
+        button {
+            background: linear-gradient(135deg, #BA7517 0%, #8B5E15 100%);
+            color: white; border: none; padding: 12px 28px; border-radius: 12px;
+            cursor: pointer; font-weight: bold; transition: all 0.3s ease;
+        }
+        button:hover { background: linear-gradient(135deg, #CF8720 0%, #A06F1A 100%); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(186, 117, 23, 0.3); }
+        button.delete {
+            background: linear-gradient(135deg, #7A2A2A 0%, #5A1E1E 100%);
+            padding: 8px 16px; font-size: 12px;
+        }
+        button.delete:hover { background: linear-gradient(135deg, #9A3535 0%, #6E2525 100%); }
+        .table-responsive { overflow-x: auto; margin-top: 15px; border-radius: 12px; }
+        table { width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        th { background: linear-gradient(135deg, #8B5E15 0%, #6B4610 100%); color: #FAC775; padding: 14px; font-weight: 600; text-align: left; }
+        td { padding: 12px; border-bottom: 1px solid rgba(186, 117, 23, 0.3); color: rgba(250, 199, 117, 0.9); vertical-align: middle; }
+        tr:hover { background: rgba(186, 117, 23, 0.1); }
+        .error { background: linear-gradient(135deg, #7A2A2A 0%, #5A1E1E 100%); color: #F09595; padding: 12px; border-radius: 12px; margin-top: 15px; }
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(250, 199, 117, 0.3); border-top: 3px solid #FAC775; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .empty-state { text-align: center; padding: 40px; color: rgba(250, 199, 117, 0.6); }
+        @media (max-width: 768px) { .form-group { flex-direction: column; } th, td { padding: 8px; } h1 { font-size: 1.5rem; } }
+    </style>
+</head>
+<body>
+    <div class="particle">📚</div>
+    <div class="particle">👨‍🎓</div>
+    <div class="particle">📖</div>
+    <div class="particle">✏️</div>
+    <div class="particle">🎓</div>
+    <div class="particle">📝</div>
+    <div class="particle">✅</div>
+
+    <div class="container">
+        <a href="index.html" class="btn-back">← Retour au Dashboard</a>
+        <h1>📊 Mes inscriptions</h1>
+        
+        <div class="card">
+            <h2>🔍 Consulter mes inscriptions</h2>
+            <div class="form-group">
+                <input type="text" id="viewStudentCnie" placeholder="Entrez votre CNIE" autocomplete="off">
+                <button onclick="getEnrollments()">🔍 Voir mes inscriptions</button>
+            </div>
+            <div id="enrollmentsList" class="loading-spinner-container">
+                <div class="loading-spinner"></div> Entrez votre CNIE pour voir vos inscriptions...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function getEnrollments() {
+            const studentCnie = document.getElementById('viewStudentCnie').value.trim();
+            
+            if (!studentCnie) {
+                document.getElementById('enrollmentsList').innerHTML = '<div class="error">❌ Veuillez entrer votre CNIE</div>';
+                return;
+            }
+            
+            const container = document.getElementById('enrollmentsList');
+            container.innerHTML = '<div><div class="loading-spinner"></div> Chargement de vos inscriptions...</div>';
+            
+            try {
+                // ✅ URL CORRECTE (sans /cnie/)
+                const response = await fetch(`/api/enrollments/student/${studentCnie}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const enrollments = await response.json();
+                
+                if (enrollments.length === 0) {
+                    container.innerHTML = '<div class="empty-state">📭 Aucune inscription trouvée pour ce CNIE</div>';
+                } else {
+                    let html = `
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Cours</th>
+                                        <th>Date d'inscription</th>
+                                        <th>Annulation possible</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    enrollments.forEach(e => {
+                        html += `
+                            <tr>
+                                <td><strong>${e.enrollmentId}</strong></td>
+                                <td>${e.courseName}</td>
+                                <td>${new Date(e.date).toLocaleString()}</td>
+                                <td>${e.deletable ? '<span style="color: #48bb78;">✅ Oui (moins de 24h)</span>' : '<span style="color: #e53e3e;">❌ Non (plus de 24h)</span>'}</td>
+                                <td>${e.deletable ? `<button class="delete" onclick="deleteEnrollment(${e.enrollmentId})">🗑️ Annuler</button>` : '-'}</td>
+                            </tr>
+                        `;
+                    });
+                    html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                container.innerHTML = `<div class="error">❌ Erreur de connexion au serveur: ${error.message}</div>`;
+            }
+        }
+        
+        async function deleteEnrollment(enrollmentId) {
+            if (!confirm('⚠️ Êtes-vous sûr de vouloir annuler cette inscription ?')) return;
+            
+            try {
+                const response = await fetch(`/api/enrollments/${enrollmentId}`, { method: 'DELETE' });
+                const result = await response.text();
+                alert(result);
+                getEnrollments();
+            } catch (error) {
+                alert('❌ Erreur: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
