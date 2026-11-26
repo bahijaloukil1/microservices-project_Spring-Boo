@@ -131,9 +131,7 @@
     </div>
 
     <script>
-        // ======================
-        // CHARGER LES COURS
-        // ======================
+        
         async function loadCourses() {
             try {
                 const response = await fetch('/api/courses');
@@ -163,9 +161,7 @@
             }
         }
 
-        // ======================
-        // INSCRIPTION
-        // ======================
+       
         async function enrollStudent() {
             const studentCnie = document.getElementById('studentCnie').value.trim();
             const courseId = document.getElementById('courseId').value;
@@ -198,9 +194,7 @@
             }
         }
 
-        // ======================
-        // AFFICHER LES ÉTUDIANTS PAR COURS
-        // ======================
+      
         async function showStudentsByCourse() {
             const courseId = document.getElementById('courseSelect').value;
             const container = document.getElementById('studentsByCourseResult');
@@ -271,9 +265,7 @@
             }
         }
 
-        // ======================
-        // CHARGEMENT AU DÉMARRAGE
-        // ======================
+     
         document.addEventListener('DOMContentLoaded', function() {
             loadCourses();
         });

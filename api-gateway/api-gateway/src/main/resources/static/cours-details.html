@@ -181,9 +181,6 @@
     <script>
         let courses = [];
 
-        // ======================
-        // CHARGER LES COURS
-        // ======================
         async function loadCourses() {
             try {
                 const response = await fetch('/api/courses');
@@ -225,9 +222,7 @@
             }
         }
 
-        // ======================
-        // AFFICHER LES ÉTUDIANTS D'UN COURS
-        // ======================
+       
         async function showStudentsByCourse(courseId) {
             const container = document.getElementById('resultContainer');
             const content = document.getElementById('resultContent');
@@ -319,9 +314,7 @@
             }
         }
 
-        // ======================
-        // AFFICHER LES ÉTUDIANTS (via select)
-        // ======================
+        
         function showStudents() {
             const courseId = document.getElementById('courseSelect').value;
             if (!courseId) {
@@ -332,9 +325,7 @@
             showStudentsByCourse(courseId);
         }
 
-        // ======================
-        // CHARGEMENT AU DÉMARRAGE
-        // ======================
+        
         document.addEventListener('DOMContentLoaded', function() {
             loadCourses();
         });

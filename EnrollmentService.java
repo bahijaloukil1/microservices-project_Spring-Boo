@@ -96,7 +96,7 @@ public class EnrollmentService {
         }).collect(Collectors.toList());
     }
 
-    // Récupérer toutes les inscriptions d'un étudiant par son CNIE
+    
     public List<EnrollmentResponseDTO> getEnrollmentsByStudentCnie(String cnie) {
         StudentDTO student = studentClient.getStudentByCnie(cnie);
         if (student == null) {
@@ -105,7 +105,7 @@ public class EnrollmentService {
         return getEnrollmentsByStudentId(student.getId());
     }
 
-    // ========== NOUVELLE METHODE: Récupérer les inscriptions par cours ==========
+    
     public List<EnrollmentResponseDTO> getEnrollmentsByCourseId(Long courseId) {
         List<Enrollment> enrollments = enrollmentRepository.findByCourseId(courseId);
         
@@ -130,7 +130,7 @@ public class EnrollmentService {
         }).collect(Collectors.toList());
     }
 
-    // Supprimer une inscription
+   
     public String deleteEnrollment(Long enrollmentId) {
         java.util.Optional<Enrollment> enrollmentOpt = enrollmentRepository.findById(enrollmentId);
 
